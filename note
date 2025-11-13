@@ -1,0 +1,59 @@
+# ==================== НОТАТКИ ====================
+class Note:
+    def __init__(self, text):
+        self.text = text
+        self.tags = []
+
+    def add_tag(self, tag):
+        tag = tag.strip()
+        if tag and tag not in self.tags:
+            self.tags.append(tag)
+
+    def __str__(self):
+        tags_str = f", теги: {', '.join(self.tags)}" if self.tags else ""
+        return f"{self.text}{tags_str}"
+
+class NotesDict(UserDict):
+    def __init__(self):
+        super().__init__()
+        self.next_id = 1
+
+    def add_note(self, text):
+        note = Note(text.strip())
+        key = str(self.next_id)
+        self.data[key] = note
+        self.next_id += 1
+        return key
+
+    def search(self, query):
+        query_lower = query.lower()
+        results = []
+        for key, note in self.data.items():
+            if query_lower in note.text.lower():
+                results.append((key, note))
+        return results
+
+    def search_by_tag(self, tag):
+        tag_lower = tag.lower()
+        results = []
+        for key, note in self.data.items():
+            if any(t.lower() == tag_lower for t in note.tags):
+                results.append((key, note))
+        results.sort(key=lambda x: x[1].text.lower())
+        return results
+
+    def edit_note(self, key, new_text):
+        if key in self.data:
+            self.data[key].text = new_text.strip()
+        else:
+            raise KeyError("Нотатку не знайдено.")
+
+    def delete_note(self, key):
+        if key in self.data:
+            del self.data[key]
+        else:
+            raise KeyError("Нотатку не знайдено.")
+
+    def all_notes(self):
+        sorted_notes = sorted(self.data.items(), key=lambda x: x[1].text.lower())
+        return [(key, note) for key, note in sorted_notes]

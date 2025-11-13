@@ -1,6 +1,19 @@
 from collections import UserDict
 from datetime import datetime, timedelta
 import pickle
+from colorama import init, Fore, Style
+
+
+# ІНІЦІАЛІЗАЦІЯ COLORAMA (ОБОВ'ЯЗКОВО!)
+init(autoreset=True)
+
+# КОЛЬОРОВІ КОНСТАНТИ
+C_SUCCESS = Fore.GREEN
+C_ERROR = Fore.RED
+C_WARNING = Fore.YELLOW
+C_INFO = Fore.CYAN
+C_BRIGHT = Style.BRIGHT
+C_RESET = Style.RESET_ALL
 
 def input_error(func):
     def inner(*args, **kwargs):
@@ -381,6 +394,46 @@ def load_data(filename="addressbook.pkl"):
             return pickle.load(f)
     except FileNotFoundError:
         return AddressBook()  # Нова книга, якщо файл не існує
+    
+# ==================== МЕНЮ ДОВІДКИ ====================
+def show_help():
+    help_text = f"""
+{C_BRIGHT}{C_WARNING}=== ДОСТУПНІ КОМАНДИ ==={C_RESET}
+
+{C_INFO}Контакти:{C_RESET}
+  {C_BRIGHT}add <ім'я> <телефон1> [телефон2]...{C_RESET}     — додати контакт або телефон
+  {C_BRIGHT}change <ім'я> <старий> <новий>{C_RESET}          — змінити телефон
+  {C_BRIGHT}phone <ім'я>{C_RESET}                            — показати телефони
+  {C_BRIGHT}all{C_RESET}                                     — показати всі контакти
+  {C_BRIGHT}delete <ім'я>{C_RESET}                          — видалити контакт
+  {C_BRIGHT}find <текст>{C_RESET}                           — пошук за ім'ям, телефоном, адресою, email
+
+{C_INFO}Дні народження:{C_RESET}
+  {C_BRIGHT}add-birthday <ім'я> <ДД.ММ.РРРР>{C_RESET}       — додати день народження
+  {C_BRIGHT}show-birthday <ім'я>{C_RESET}                   — показати день народження
+  {C_BRIGHT}birthdays [днів]{C_RESET}                       — найближчі дні народження (за замовчуванням 7)
+
+{C_INFO}Додатково:{C_RESET}
+  {C_BRIGHT}add-address <ім'я> <адреса>{C_RESET}             — додати адресу
+  {C_BRIGHT}add-email <ім'я> <email>{C_RESET}               — додати email
+
+{C_INFO}Нотатки:{C_RESET}
+  {C_BRIGHT}add-note <текст>{C_RESET}                      — створити нотатку
+  {C_BRIGHT}find-notes <текст>{C_RESET}                    — пошук за текстом
+  {C_BRIGHT}edit-note <id> <новий текст>{C_RESET}          — редагувати нотатку
+  {C_BRIGHT}delete-note <id>{C_RESET}                     — видалити нотатку
+  {C_BRIGHT}all-notes{C_RESET}                               — показати всі нотатки
+  {C_BRIGHT}add-tag <id> <тег1> [тег2]...{C_RESET}         — додати теги
+  {C_BRIGHT}find-by-tag <тег>{C_RESET}                     — пошук за тегом
+
+{C_INFO}Система:{C_RESET}
+  {C_BRIGHT}hello{C_RESET}                                   — привітання
+  {C_BRIGHT}help{C_RESET}                                    — це меню
+  {C_BRIGHT}close / exit{C_RESET}                           — вийти та зберегти
+
+{C_BRIGHT}Приклад: add John 1234567890{C_RESET}
+"""
+    return help_text.strip()
 
 def main():
     book = load_data()
@@ -421,6 +474,9 @@ def main():
 
         elif command == "birthdays":
             print(birthdays(args, book))
+
+        elif command == "help":
+            print(show_help())
 
 # >>> Notes CLI Commands
 

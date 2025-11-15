@@ -523,7 +523,7 @@ def load_data(filename="addressbook.pkl"):
 @input_error
 def search_contacts(args, book):
     if not args:
-        return f"{C_ERROR}Використання: find <запит>{C_RESET}"
+        return f"{C_ERROR}Використання: search <запит>{C_RESET}"
     query = ' '.join(args)
     results = book.search(query)
     if not results:
@@ -541,7 +541,7 @@ def show_help():
   {C_BRIGHT}phone <ім'я>{C_RESET}                            — показати телефони
   {C_BRIGHT}all{C_RESET}                                     — показати всі контакти
   {C_BRIGHT}delete <ім'я>{C_RESET}                           — видалити контакт
-  {C_BRIGHT}find <текст>{C_RESET}                            — пошук за ім'ям, телефоном, адресою, email
+  {C_BRIGHT}search <текст>{C_RESET}                            — пошук за ім'ям, телефоном, адресою, email
 
 {C_INFO}Дні народження:{C_RESET}
   {C_BRIGHT}add-birthday <ім'я> <ДД.ММ.РРРР>{C_RESET}        — додати день народження
@@ -632,7 +632,7 @@ def main():
         elif command == "all-notes":
             print(all_notes_func(args, notes))
 
-        elif command == "find":
+        elif command == "search":
                 print(search_contacts(args, book))
 
         elif command == "add-tag":

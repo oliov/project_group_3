@@ -271,6 +271,16 @@ def load_notes(filename="notes.pkl"):
     except FileNotFoundError:
         return NotesBook()
 
+@input_error
+def delete_contact(args, book):
+    if len(args) != 1:
+        return f"{C_ERROR}Використання: delete <ім'я>{C_RESET}"
+    name = args[0]
+    if book.find(name.lower()):
+        book.delete(name.lower())
+        return f"{C_SUCCESS}Контакт видалено.{C_RESET}"
+    raise KeyError
+
 
 # ==================== CLI Commands ====================
 
@@ -618,6 +628,9 @@ def main():
             print(add_email(args, book))
         elif command == "help":
             print(show_help())
+
+        elif command == "delete":
+                print(delete_contact(args, book))
 
 # >>> Notes CLI Commands
 

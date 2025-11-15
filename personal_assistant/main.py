@@ -153,8 +153,23 @@ class AddressBook(UserDict):
                     "name": record.name.value,
                     "congratulation_date": congrats_date.strftime("%Y.%m.%d")
                 })
-        return upcoming
-
+        return upcoming 
+    
+    def edit_email(self, name, new_email):
+        for record in self.records:
+            if record.name.lower() == name.lower():
+                record.address = new_address
+                print(f"Address for '{name}' update")
+                return
+            print("Contact not found")
+        
+    def edit_address(self, name, new_address):
+        for record in self.data.values:
+            if record.name.value.lower() == name.lower():
+                record.address = new_address
+                print(f"Address for '{name}' update")
+                return
+        print("Contact not found")
 
 # >>> START OF NOTES MODULE =========================================
 

@@ -133,7 +133,7 @@ class AddressBook(UserDict):
         if key in self.data:
             del self.data[key]
 
-    def get_upcoming_birthdays(self):
+    def get_upcoming_birthdays(self, period=7):
         today = datetime.today().date()
         upcoming = []
         for record in self.data.values():
@@ -144,16 +144,16 @@ class AddressBook(UserDict):
             if bday_this_year < today:
                 bday_this_year = bday_this_year.replace(year=today.year + 1)
             delta = (bday_this_year - today).days
-            if 0 <= delta <= 7:
+            if 0 <= delta <= period:
                 congrats_date = bday_this_year
-                if congrats_date.weekday() >= 5:  # Сб или Нд → понедельник
+                if congrats_date.weekday() >= 5:  # субота або неділя
                     days_to_monday = 7 - congrats_date.weekday()
                     congrats_date += timedelta(days=days_to_monday)
                 upcoming.append({
                     "name": record.name.value,
-                    "congratulation_date": congrats_date.strftime("%Y.%m.%d")
+                    "congratulation_date": congrats_date.strftime("%d.%m.%Y")
                 })
-        return upcoming
+        return upcoming 
     
     def search(self, query):
         query_lower = query.lower()
@@ -490,11 +490,19 @@ def show_birthday(args, book):
 
 @input_error
 def birthdays(args, book):
-    upcoming = book.get_upcoming_birthdays()
+    period = 7
+    if args:
+        try:
+            period = int(args[0])
+            if period < 0:
+                raise ValueError
+        except:
+            return f"{C_ERROR}Невірна кількість днів.{C_RESET}"
+    upcoming = book.get_upcoming_birthdays(period)
     if not upcoming:
-        return "No birthdays in the next 7 days."
-    lines = [f"{item['name']} — {item['congratulation_date']}" for item in upcoming]
-    return "Upcoming birthdays:\n" + "\n".join(lines)
+        return f"{C_INFO}Немає днів народження протягом наступних {period} днів.{C_RESET}"
+    lines = [f"{C_BRIGHT}{item['name']}{C_RESET} — {item['congratulation_date']}" for item in upcoming]
+    return f"{C_SUCCESS}Найближчі дні народження:\n" + "\n".join(lines) + C_RESET
 
 @input_error
 def add_address(args, book):

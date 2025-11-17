@@ -572,15 +572,14 @@ def birthdays(args, book):
 @input_error
 def add_address(args, book):
     if len(args) < 2:
-        return "Usage: add-address <name> <address...>"
+        return f"{C_ERROR}Usage: add-address <name> <address...>{C_RESET}"
     name = args[0]
     address = ' '.join(args[1:])
-    record = book.find(name)
+    record = book.find(name.lower())
     if not record:
         raise KeyError("Contact not found.")
     record.add_address(address)
-    return "Address added."
-
+    return f"{C_SUCCESS}Address added for '{name}'{C_RESET}"
 
 @input_error
 def add_email(args, book):
@@ -593,6 +592,36 @@ def add_email(args, book):
     record.add_email(email)
     return "Email added."
 
+@input_error
+def edit_address(args, book):
+    if len(args) < 2:
+        return f"{C_ERROR}Usage: edit-address <name> <new address...>{C_RESET}"
+    name, new_address = args[0], ' '.join(args[1:])
+    record = book.find(name.lower())
+    if not record:
+        raise KeyError("Contact not found.")
+    if record.address is None:
+        return f"{C_ERROR}No address to edit. Use 'add-address' first.{C_RESET}"
+    record.address = Address(new_address)
+    return f"{C_SUCCESS}Address updated.{C_RESET}"
+
+
+@input_error
+def edit_email(args, book):
+    if len(args) != 3:
+        return f"{C_ERROR}Usage: edit-email <name> <old email> <new email>{C_RESET}"
+    name, old_email, new_email = args
+    record = book.find(name.lower())
+    if not record:
+        raise KeyError("Contact not found.")
+    
+    old_email = old_email.lower()
+    for i, email in enumerate(record.emails):
+        if email.value == old_email:
+            record.emails[i] = Email(new_email)
+            return f"{C_SUCCESS}Email updated: {old_email} → {new_email}{C_RESET}"
+    
+    return f"{C_ERROR}Email '{old_email}' not found.{C_RESET}"
 
 def save_data(book, filename="addressbook.pkl"):
     with open(filename, "wb") as f:
@@ -648,12 +677,13 @@ def show_help():
 {C_INFO}Додатково:{C_RESET}
   {C_BRIGHT}add-address <ім'я> <адреса>{C_RESET}         \
 — додати адресу
+  {C_BRIGHT}edit-address <ім'я> <нова адреса>{C_RESET}     — змінити адресу
   {C_BRIGHT}add-email <ім'я> <email>{C_RESET}            \
 — додати email
-
+  {C_BRIGHT}edit-email <ім'я> <старий> <новий>{C_RESET}  — змінити email
+ 
 {C_INFO}Нотатки:{C_RESET}
-  {C_BRIGHT}add-note <текст>{C_RESET}                    \
-— створити нотатку
+  {C_BRIGHT}add-note <заголовок> <текст нотатки...>{C_RESET}  — створити нотатку
   {C_BRIGHT}search-notes <текст>{C_RESET}                \
 — пошук за текстом
   {C_BRIGHT}edit-note <id> <новий текст>{C_RESET}        \
@@ -684,6 +714,7 @@ def main():
     notes = load_notes()
 
     print("Welcome to the assistant bot!")
+    print(f"{C_INFO}Enter 'help' to see commands.{C_RESET}")
 
     while True:
         user_input = input("Enter a command: ")
@@ -721,47 +752,54 @@ def main():
 
         elif command == "add-address":
             print(add_address(args, book))
-
+            
+        elif command == "edit-address":
+            print(edit_address(args, book))
+                   
         elif command == "add-email":
             print(add_email(args, book))
+
+        elif command == "edit-email":
+            print(edit_email(args, book))
+
+        elif command in ["search", "find"]:
+            print(search_contacts(args, book)) 
+
         elif command == "help":
             print(show_help())
 
         elif command == "delete":
             print(delete_contact(args, book))
 
-        elif command == "edit-address":
-            print(book.edit_address(args))
-
-        elif command == "edit-email":
-            print(book.edit_email(args))
-
+               
 # >>> Notes CLI Commands
 
         elif command == "add-note":
             print(add_note(args, notes))
+
         elif command == "show-note":
             print(show_note(args, notes))
-        elif command == "edit-note":
-            print(edit_note(args, notes))
-        elif command == "delete-note":
-            print(delete_note(args, notes))
-        elif command == "all-notes":
+
+        elif command in ["all-notes", "notes"]:
             print(all_notes_func(args, notes))
 
-        elif command == "search":
-            print(search_contacts(args, book))
+        elif command == "edit-note":
+            print(edit_note(args, notes))
+
+        elif command == "delete-note":
+            print(delete_note(args, notes))
 
         elif command == "add-tag":
             print(add_tag(args, notes))
+
         elif command == "remove-tag":
             print(remove_tag(args, notes))
 
-        elif command == "search-notes":
-            print(search_notes(args, notes))
-
         elif command == "find-by-tag":
             print(find_by_tag(args, notes))
+
+        elif command in ["search-notes", "find-notes"]:     # <<< ВИПРАВЛЕНО
+            print(find_notes(args, notes))
 
         elif command == "filter-notes-by-tag":
             print(filter_notes_by_tag(args, notes))

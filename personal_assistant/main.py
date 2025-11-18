@@ -652,7 +652,7 @@ def show_help():
 — додати email
 
 {C_INFO}Нотатки:{C_RESET}
-  {C_BRIGHT}add-note <текст>{C_RESET}                    \
+  {C_BRIGHT}add-note <назва> <текст>{C_RESET}                    \
 — створити нотатку
   {C_BRIGHT}search-notes <текст>{C_RESET}                \
 — пошук за текстом

@@ -636,6 +636,8 @@ def show_help():
 — видалити контакт
   {C_BRIGHT}search <текст>{C_RESET}                      \
 — пошук за ім'ям, телефоном, адресою, email
+  {C_BRIGHT}delete <ім'я>{C_RESET}                      \
+— видалити контакт
 
 {C_INFO}Дні народження:{C_RESET}
   {C_BRIGHT}add-birthday <ім'я> <ДД.ММ.РРРР>{C_RESET}    \
@@ -650,6 +652,10 @@ def show_help():
 — додати адресу
   {C_BRIGHT}add-email <ім'я> <email>{C_RESET}            \
 — додати email
+  {C_BRIGHT}edit-email <старий> <новий>{C_RESET}            \
+— змінити email
+  {C_BRIGHT}edit-address <нова адреса>{C_RESET}            \
+— змінити адресу email
 
 {C_INFO}Нотатки:{C_RESET}
   {C_BRIGHT}add-note <назва> <текст>{C_RESET}                    \
